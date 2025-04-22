@@ -1,6 +1,6 @@
--- Zac Emerzian
--- CMPM 121 - Pickup
--- 4-11-25
+-- Hunter Kingsley / Zac Emerzian
+-- CMPM 121 - Solitare
+-- 4-21-25
 io.stdout:setvbuf("no")
 
 require "card"
@@ -14,6 +14,8 @@ function love.load()
   cardTable = {}
   
   table.insert(cardTable, CardClass:new(100, 100))
+  table.insert(cardTable, CardClass:new(200, 200))
+  table.insert(cardTable, CardClass:new(300, 300))
   
 end
 function love.update()
@@ -21,6 +23,7 @@ function love.update()
   
   checkForMouseMoving()  
   
+  table.sort(cardTable, zSort)
   for _, card in ipairs(cardTable) do
     card:update()
   end
@@ -43,3 +46,5 @@ function checkForMouseMoving()
     card:checkForMouseOver(grabber)
   end
 end
+
+function zSort(a, b) return a.z < b.z end

@@ -26,7 +26,7 @@ function GrabberClass:update()
   )
   
   -- Click (just the first frame)
-  if love.mouse.isDown(1) and self.grabPos == nil then
+  if love.mouse.isDown(1) and self.grabPos == nil and self.heldObject == nil then
     self:grab()
   end
   -- Release
@@ -40,7 +40,7 @@ function GrabberClass:grab()
   print("GRAB - " .. tostring(self.grabPos))
 end
 function GrabberClass:release()
-  print("RELEASE - ")
+  print("RELEASE - ") -- WATER BUCKET
   -- NEW: some more logic stubs here
   if self.heldObject == nil then -- we have nothing to release
     return
@@ -55,7 +55,7 @@ function GrabberClass:release()
     self.heldObject.position = self.grabPos - (self.heldObject.size / 2)
   end
   
-  self.heldObject.state = 0 -- it's no longer grabbed
+  self.heldObject.state = CARD_STATE.IDLE -- it's no longer grabbed
   
   self.heldObject = nil
   self.grabPos = nil
