@@ -1,4 +1,4 @@
--- Hunter Kingsley / Zac Emerzian
+-- Hunter Kingsley / Zac Emerzians
 -- CMPM 121 - Solitare
 -- 4-21-25
 io.stdout:setvbuf("no")
@@ -9,13 +9,15 @@ require "grabber"
 function love.load()
   love.window.setMode(960, 640)
   love.graphics.setBackgroundColor(0, 0.7, 0.2, 1)
+  love.graphics.setDefaultFilter("nearest", "nearest")
   
   grabber = GrabberClass:new()
   cardTable = {}
   
-  table.insert(cardTable, CardClass:new(100, 100))
-  table.insert(cardTable, CardClass:new(200, 200))
-  table.insert(cardTable, CardClass:new(300, 300))
+  table.insert(cardTable, CardClass:new(100, 100, CARD_SUIT.SPADES, 2))
+  table.insert(cardTable, CardClass:new(200, 200, CARD_SUIT.HEARTS, 3))
+  table.insert(cardTable, CardClass:new(300, 300, CARD_SUIT.CLUBS, 4))
+  table.insert(cardTable, CardClass:new(400, 400, CARD_SUIT.DIAMONDS, 5))
   
 end
 function love.update()

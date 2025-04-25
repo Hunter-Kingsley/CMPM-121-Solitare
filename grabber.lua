@@ -43,6 +43,7 @@ function GrabberClass:release()
   print("RELEASE - ") -- WATER BUCKET
   -- NEW: some more logic stubs here
   if self.heldObject == nil then -- we have nothing to release
+    self.grabPos = nil
     return
   end
   
