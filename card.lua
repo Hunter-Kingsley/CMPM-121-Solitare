@@ -71,8 +71,8 @@ function CardClass:update()
     self.position = Vector(self.cardBelowThis.position.x, self.cardBelowThis.position.y + CARD_OVERLAP_OFFSET)
   end
   
---  if self.cardBelowThis ~= nil then
---    print(self.cardBelowThis)
+--  if self.state == CARD_STATE.GRABBED and self.cardBelowThis == nil then
+--    self.z = 100
 --  end
 end
 
@@ -125,9 +125,10 @@ function CardClass:draw()
     love.graphics.draw(Sprites[CARD_SUIT.DIAMONDS + 1], self.position.x + 5, self.position.y + 50, 0, 0.11, 0.11)
   end
   
-  -- print state and value of card under
+  -- print state, value of card under, and z value
   love.graphics.setColor(0, 0, 0, 1)
   love.graphics.print(tostring(self.state), self.position.x + 20, self.position.y - 20)
+  love.graphics.print(tostring(self.z), self.position.x + 55, self.position.y - 10)
   if self.cardBelowThis ~= nil then
     love.graphics.setColor(1, 0, 0, 1)
     love.graphics.print(tostring(self.cardBelowThis.value), self.position.x + 55, self.position.y - 20)
@@ -153,10 +154,17 @@ function CardClass:checkForMouseOver(grabber)
     return
   end
   
-  if grabber.heldObject ~= nil and self.state ~= CARD_STATE.UNDER_FULL_GRABBER then
-    grabber.heldObject.cardBelowThis = nil
-    self.z = 1
+--  if grabber.heldObject ~= nil and self.state ~= CARD_STATE.UNDER_FULL_GRABBER then
+--    grabber.heldObject.cardBelowThis = nil
+--    self.z = 1
+--  end
+
+  if grabber.heldObject ~= nil then
+    if grabber.heldObject.cardBelowThis == self and self.state ~= CARD_STATE.UNDER_FULL_GRABBER then
+      grabber.heldObject.cardBelowThis = nil
+    end
   end
+  
   self.state = isMouseOver and CARD_STATE.MOUSE_OVER or CARD_STATE.IDLE
   
   self:checkForGrabbed(grabber)
