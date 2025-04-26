@@ -58,6 +58,7 @@ function CardClass:update()
     love.mouse.getY()
   )
     self.position = mousePos - (self.size / 2)
+    self.z = 100
   end
   
   if self.state == CARD_STATE.IDLE and self.cardBelowThis ~= nil then
@@ -67,6 +68,12 @@ function CardClass:update()
     self.state = CARD_STATE.IDLE_IN_STACK
   elseif self.state == CARD_STATE.IDLE then
     -- Ensure it's not falling behind the stack
+    self.z = 1
+  end
+  
+  if self.cardBelowThis ~= nil then
+    self.z = self.cardBelowThis.z + 1
+  else
     self.z = 1
   end
   
@@ -128,20 +135,21 @@ function CardClass:draw()
     love.graphics.draw(Sprites[CARD_SUIT.DIAMONDS + 1], self.position.x + 5, self.position.y + 50, 0, 0.11, 0.11)
   end
   
-  -- print state, value of card under, value of card above, and z value
-  love.graphics.setColor(0, 0, 0, 1)
-  love.graphics.print(tostring(self.state), self.position.x + 20, self.position.y - 20)
-  love.graphics.setColor(1, 1, 0, 1)
-  love.graphics.print(tostring(self.z), self.position.x + 75, self.position.y)
-  if self.cardBelowThis ~= nil then
-    love.graphics.setColor(1, 0, 0, 1)
-    love.graphics.print(tostring(self.cardBelowThis.value), self.position.x + 55, self.position.y - 20)
+  if debug then
+    -- print state, value of card under, value of card above, and z value
+    love.graphics.setColor(0, 0, 0, 1)
+    love.graphics.print(tostring(self.state), self.position.x + 20, self.position.y - 20)
+    love.graphics.setColor(1, 1, 0, 1)
+    love.graphics.print(tostring(self.z), self.position.x + 75, self.position.y)
+    if self.cardBelowThis ~= nil then
+      love.graphics.setColor(1, 0, 0, 1)
+      love.graphics.print(tostring(self.cardBelowThis.value), self.position.x + 55, self.position.y - 20)
+    end
+    if self.cardAboveThis ~= nil then
+      love.graphics.setColor(0, 0, 1, 1)
+      love.graphics.print(tostring(self.cardAboveThis.value), self.position.x + 65, self.position.y + 20)
+    end
   end
-  if self.cardAboveThis ~= nil then
-    love.graphics.setColor(0, 0, 1, 1)
-    love.graphics.print(tostring(self.cardAboveThis.value), self.position.x + 65, self.position.y + 20)
-  end
-  
 end
 
 function CardClass:checkForMouseOver(grabber)
