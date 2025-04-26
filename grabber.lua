@@ -16,6 +16,9 @@ function GrabberClass:new()
   -- NEW: we'll want to keep track of the object (ie. card) we're holding
   grabber.heldObject = nil
   
+  grabber.isOverDeck = false
+  grabber.deckRefrence = nil
+  
   return grabber
 end
 
@@ -38,6 +41,14 @@ end
 function GrabberClass:grab()
   self.grabPos = self.currentMousePos
   print("GRAB - " .. tostring(self.grabPos))
+  
+  if self.isOverDeck == true and self.heldObject == nil and #self.deckRefrence.cards > 0 then
+    print(#self.deckRefrence.cards)
+    self.deckRefrence.cards[#self.deckRefrence.cards].faceUp = true
+    self.deckRefrence.cards[#self.deckRefrence.cards].state = CARD_STATE.GRABBED
+    print("grabbed: " .. tostring(self.deckRefrence.cards[#self.deckRefrence.cards]))
+    self.heldObject = table.remove(self.deckRefrence.cards)
+  end
 end
 function GrabberClass:release()
   print("RELEASE - ") -- WATER BUCKET

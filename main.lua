@@ -3,7 +3,7 @@
 -- 4-21-25
 io.stdout:setvbuf("no")
 
-debug = true
+debug = false
 
 require "card"
 require "grabber"
@@ -16,19 +16,15 @@ TABLEAU_Y = 200
 
 function love.load()
   love.window.setMode(960, 640)
+  love.window.setTitle("Solitare - Hunter Kingsley")
   love.graphics.setBackgroundColor(0, 0.7, 0.2, 1)
   love.graphics.setDefaultFilter("nearest", "nearest")
   
   grabber = GrabberClass:new()
+  deck = DeckClass:new(50, 50)
   cardTable = {}
   holderTable = {}
   
-  table.insert(cardTable, CardClass:new(100, 100, CARD_SUIT.SPADES, 2))
-  table.insert(cardTable, CardClass:new(200, 200, CARD_SUIT.HEARTS, 3))
-  table.insert(cardTable, CardClass:new(300, 300, CARD_SUIT.CLUBS, 4))
-  table.insert(cardTable, CardClass:new(400, 400, CARD_SUIT.DIAMONDS, 5))
-  
-  --table.insert(holderTable, DeckClass:new(50, 50))
   table.insert(holderTable, HolderClass:new(TABLEAU_START_X, TABLEAU_Y))
   table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING, TABLEAU_Y))
   table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 2, TABLEAU_Y))
@@ -37,6 +33,12 @@ function love.load()
   table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 5, TABLEAU_Y))
   table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 6, TABLEAU_Y))
   
+  table.insert(holderTable, HolderClass:new(600, 50))
+  table.insert(holderTable, HolderClass:new(670, 50))
+  table.insert(holderTable, HolderClass:new(740, 50))
+  table.insert(holderTable, HolderClass:new(810, 50))
+  
+  deck:setup()
 end
 function love.update()
   grabber:update()
@@ -50,6 +52,8 @@ function love.update()
 end
 function love.draw()
   love.graphics.setColor(0, 0, 0, 1)
+  
+  deck:draw()
   
   for _, holder in ipairs(holderTable) do
     holder:draw()
@@ -75,6 +79,8 @@ function checkForMouseMoving()
   for _, holder in ipairs(holderTable) do
     holder:checkForMouseOver(grabber)
   end
+  
+  deck:checkForMouseOver(grabber)
 end
 
 function zSort(a, b) return a.z < b.z end

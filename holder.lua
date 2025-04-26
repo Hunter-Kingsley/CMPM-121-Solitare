@@ -1,7 +1,7 @@
 
 -- TODO: make the cards snap to the position of the holder, have holder acuratley store what cards are in its pile 
 
-require "Vector"
+require "vector"
 
 HolderClass = {}
 
@@ -35,22 +35,22 @@ function HolderClass:update()
 end
 
 function HolderClass:checkForMouseOver(grabber)
-  if grabber.heldObject ~= nil and self:isMouseOver() then
+  if grabber.heldObject ~= nil and self:isMouseOver(grabber) then
     self.lastSeenCard = grabber.heldObject
   end
   if self.lastSeenCard ~= nil then
-    if self:isMouseOver() and self.lastSeenCard.state ~= CARD_STATE.GRABBED then
+    if self:isMouseOver(grabber) and self.lastSeenCard.state ~= CARD_STATE.GRABBED then
       table.insert(self.cards, self.lastSeenCard)
     end
   end
   
   
-  if self:isMouseOver() == false then
+  if self:isMouseOver(grabber) == false then
     self.lastSeenCard = nil
   end
 end
 
-function HolderClass:isMouseOver()
+function HolderClass:isMouseOver(grabber)
   local mousePos = grabber.currentMousePos
   local isMouseOver = 
     mousePos.x > self.position.x and
