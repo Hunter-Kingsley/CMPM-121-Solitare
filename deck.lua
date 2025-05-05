@@ -3,7 +3,7 @@ require "vector"
 require "holder"
 require "card"
 
-DeckClass = {}
+DeckClass = HolderClass:new()
 
 function DeckClass:new(xPos, yPos)
   local Deck = {}
@@ -11,8 +11,6 @@ function DeckClass:new(xPos, yPos)
   setmetatable(Deck, metatable)
   
   Deck.position = Vector(xPos, yPos)
-  Deck.size = Vector(50, 70)
-  Deck.cards = {}
   
   return Deck
 end
@@ -28,17 +26,6 @@ end
 
 function DeckClass:update()
   
-end
-
-function DeckClass:isMouseOver(grabber)
-  local mousePos = grabber.currentMousePos
-  local isMouseOver = 
-    mousePos.x > self.position.x and
-    mousePos.x < self.position.x + self.size.x and
-    mousePos.y > self.position.y and
-    mousePos.y < self.position.y + self.size.y
-    
-    return isMouseOver
 end
 
 function DeckClass:checkForMouseOver(grabber)

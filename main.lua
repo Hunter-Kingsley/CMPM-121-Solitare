@@ -15,6 +15,7 @@ TABLEAU_SPACING = 123
 TABLEAU_Y = 200
 
 function love.load()
+  math.randomseed(os.time())
   love.window.setMode(960, 640)
   love.window.setTitle("Solitare - Hunter Kingsley")
   love.graphics.setBackgroundColor(0, 0.7, 0.2, 1)
@@ -45,6 +46,7 @@ function love.update()
   
   checkForMouseMoving()  
   
+  -- Sort the table from highest to lowest Z values to determine correct drawing order
   table.sort(cardTable, zSort)
   for _, card in ipairs(cardTable) do
     card:update()

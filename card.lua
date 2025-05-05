@@ -31,8 +31,7 @@ function CardClass:new(xPos, yPos, suit, value, FU)
   local card = {}
   local metadata = {
     __index = CardClass,
-    -- Setting two cards equal returns whether or not they are the same color
-    __eq = function(a, b)
+    __eq = function(a, b) -- Setting two cards equal returns whether or not they are the same color
     if type(a) ~= "table" or type(b) ~= "table" then return false end
     return (a.suit % 2) == (b.suit % 2)
   end
@@ -149,8 +148,7 @@ function CardClass:draw()
   end
   
   
-  if debug then
-    -- print state, value of card under, value of card above, and z value
+  if debug then -- print state, value of card under, value of card above, and z value
     love.graphics.setColor(0, 0, 0, 1)
     love.graphics.print(tostring(self.state), self.position.x + 20, self.position.y - 20)
     love.graphics.setColor(1, 1, 0, 1)
@@ -168,10 +166,12 @@ end
 
 function CardClass:checkForMouseOver(grabber)
   if self.faceUp then
+    --if this card is currently grabbed, or there is a card below this and that card is currently being grabbed
     if self.state == CARD_STATE.GRABBED or self.cardBelowThis ~= nil and self.cardBelowThis.state == CARD_STATE.GRABBED then
       return
     end
-    if self.cardAboveThis ~= nil and (grabber.heldObject ~= nil and self.state == CARD_STATE.IDLE) then
+    -- if the grabber is empty and this card is idle while there are no cards above this card
+    if self.cardAboveThis ~= nil and (grabber.heldObject ~= nil and self.state == CARD_STATE.IDLE) then --
       return
     end
     
@@ -193,7 +193,7 @@ function CardClass:checkForMouseOver(grabber)
       mousePos.y < self.position.y + self.size.y
     end
     
-    
+    -- if the mouse is over this card while it is in the grabbed state and the grabber has any card
     if self.state ~= CARD_STATE.GRABBED and grabber.heldObject ~= nil and isMouseOver then
       self.state = CARD_STATE.UNDER_FULL_GRABBER
       grabber.heldObject.cardBelowThis = self
@@ -202,6 +202,7 @@ function CardClass:checkForMouseOver(grabber)
     end
 
     if grabber.heldObject ~= nil then
+      -- if the current card is under the card held by the grabber and this card is not under a full grabber
       if grabber.heldObject.cardBelowThis == self and self.state ~= CARD_STATE.UNDER_FULL_GRABBER then
         grabber.heldObject.cardBelowThis = nil
         self.cardAboveThis = nil
@@ -210,6 +211,7 @@ function CardClass:checkForMouseOver(grabber)
       end
     end
     
+    -- if mouse is over, card is in mouse over state, else it's in the idle state
     self.state = isMouseOver and CARD_STATE.MOUSE_OVER or CARD_STATE.IDLE
     
     if isMouseOver then
@@ -225,11 +227,11 @@ function CardClass:checkForMouseOver(grabber)
   
 end
 
-function CardClass:checkForGrabbed(grabber2)
+function CardClass:checkForGrabbed(grabber)
   if self.faceUp then
-    if self.state == CARD_STATE.MOUSE_OVER and grabber2.grabPos ~= nil then
+    if self.state == CARD_STATE.MOUSE_OVER and grabber.grabPos ~= nil then
       self.state = CARD_STATE.GRABBED
-      grabber2.heldObject = self
+      grabber.heldObject = self
     end
   end
 end
