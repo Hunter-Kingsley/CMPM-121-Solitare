@@ -7,3 +7,6 @@ Sprites:
 - Clubs PNG: https://en.wikipedia.org/wiki/File:Card_club.svg
 - Hearts PNG: https://en.wikipedia.org/wiki/File:Card_heart.svg
 - Diamonds PNG: https://en.wikipedia.org/wiki/File:Card_diamond.svg
+
+
+NOTE: This is not my final submission for Project 2, this week is very busy for me, so I will make sure to re-submit this before May 14 at 11:59 PM
