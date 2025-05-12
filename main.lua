@@ -3,7 +3,7 @@
 -- 4-21-25
 io.stdout:setvbuf("no")
 
-debug = false
+debug = true
 
 require "card"
 require "grabber"
@@ -26,20 +26,7 @@ function love.load()
   cardTable = {}
   holderTable = {}
   
-  table.insert(holderTable, HolderClass:new(TABLEAU_START_X, TABLEAU_Y))
-  table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING, TABLEAU_Y))
-  table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 2, TABLEAU_Y))
-  table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 3, TABLEAU_Y))
-  table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 4, TABLEAU_Y))
-  table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 5, TABLEAU_Y))
-  table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 6, TABLEAU_Y))
-  
-  table.insert(holderTable, HolderClass:new(600, 50))
-  table.insert(holderTable, HolderClass:new(670, 50))
-  table.insert(holderTable, HolderClass:new(740, 50))
-  table.insert(holderTable, HolderClass:new(810, 50))
-  
-  deck:setup()
+  gameSetup()
 end
 function love.update()
   grabber:update()
@@ -50,6 +37,10 @@ function love.update()
   table.sort(cardTable, zSort)
   for _, card in ipairs(cardTable) do
     card:update()
+  end
+  
+  for _, holder in ipairs(holderTable) do
+    holder:update()
   end
 end
 function love.draw()
@@ -83,6 +74,29 @@ function checkForMouseMoving()
   end
   
   deck:checkForMouseOver(grabber)
+end
+
+function gameSetup()
+  table.insert(holderTable, HolderClass:new(TABLEAU_START_X, TABLEAU_Y))
+  table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING, TABLEAU_Y))
+  table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 2, TABLEAU_Y))
+  table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 3, TABLEAU_Y))
+  table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 4, TABLEAU_Y))
+  table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 5, TABLEAU_Y))
+  table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 6, TABLEAU_Y))
+  
+  table.insert(holderTable, HolderClass:new(600, 50))
+  table.insert(holderTable, HolderClass:new(670, 50))
+  table.insert(holderTable, HolderClass:new(740, 50))
+  table.insert(holderTable, HolderClass:new(810, 50))
+  
+  for i = 1, 7, 1 do
+    print("god damn it " .. i)
+    local currentCard = table.remove(deck.cards, #deck.cards)
+    table.insert(holderTable[i].cards, currentCard)
+  end
+  
+  deck:setup()
 end
 
 function zSort(a, b) return a.z < b.z end

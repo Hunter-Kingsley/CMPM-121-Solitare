@@ -23,13 +23,13 @@ function HolderClass:draw()
   love.graphics.rectangle("line", self.position.x, self.position.y, self.size.x, self.size.y)
   
   if debug then
-    love.graphics.setColor(0, 0, 0, 1)
+    love.graphics.setColor(0, 1, 0, 1)
     love.graphics.print(tostring(#self.cards), self.position.x + 10, self.position.y - 20)
   end
 end
 
 function HolderClass:update()
-  if self.cards[1].position ~= self.position then
+  if self.cards[1] ~= nil and self.cards[1].position ~= self.position then
     self.cards[1].position = self.position
   end
 end
@@ -38,9 +38,20 @@ function HolderClass:checkForMouseOver(grabber)
   if grabber.heldObject ~= nil and self:isMouseOver(grabber) then
     self.lastSeenCard = grabber.heldObject
   end
+  
   if self.lastSeenCard ~= nil then
     if self:isMouseOver(grabber) and self.lastSeenCard.state ~= CARD_STATE.GRABBED then
-      table.insert(self.cards, self.lastSeenCard)
+      if self.cards[#self.cards] ~= self.lastSeenCard then
+        table.insert(self.cards, self.lastSeenCard)        
+      end
+    end
+    
+    if self.lastSeenCard.state == CARD_STATE.GRABBED then
+      table.remove(self.cards, #self.cards)
+    end
+    
+    if self.cards[1] ~= nil and self.cards[1].position ~= self.position then
+      self.cards[1].position = self.position
     end
   end
   

@@ -25,7 +25,7 @@ function DeckClass:draw()
 end
 
 function DeckClass:update()
-  
+  return
 end
 
 function DeckClass:checkForMouseOver(grabber)
