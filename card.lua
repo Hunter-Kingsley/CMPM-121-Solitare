@@ -69,24 +69,17 @@ function CardClass:update()
       self.state = CARD_STATE.IDLE_IN_STACK
     elseif self.state == CARD_STATE.IDLE then
       -- Ensure it's not falling behind the stack
-      self.z = 1
+      self.z = 7
     end
     
     if self.cardBelowThis ~= nil then
       self.z = self.cardBelowThis.z + 1
-    else
-      self.z = 1
     end
     
     if self.cardBelowThis ~= nil and self.state ~= CARD_STATE.GRABBED then
       self.position = Vector(self.cardBelowThis.position.x, self.cardBelowThis.position.y + CARD_OVERLAP_OFFSET)
     end
-    
-  --  if self.state == CARD_STATE.GRABBED and self.cardBelowThis == nil then
-  --    self.z = 100
-  --  end
   end
-  
 end
 
 function CardClass:draw()

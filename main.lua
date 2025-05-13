@@ -90,13 +90,21 @@ function gameSetup()
   table.insert(holderTable, HolderClass:new(740, 50))
   table.insert(holderTable, HolderClass:new(810, 50))
   
-  for i = 1, 7, 1 do
-    print("god damn it " .. i)
-    local currentCard = table.remove(deck.cards, #deck.cards)
-    table.insert(holderTable[i].cards, currentCard)
-  end
-  
   deck:setup()
+  
+  for i = 1, 7, 1 do
+    for j = 1, i, 1 do
+      local currentCard = table.remove(deck.cards, #deck.cards)
+      table.insert(holderTable[i].cards, currentCard)
+      if j > 1 then
+        currentCard.cardBelowThis = holderTable[i].cards[#holderTable[i].cards]
+        currentCard.cardBelowThis = nil
+        currentCard.z = j
+      end
+    end
+    holderTable[i]:setCardPositions()
+    holderTable[i].cards[#holderTable[i].cards].faceUp = true
+  end
 end
 
 function zSort(a, b) return a.z < b.z end

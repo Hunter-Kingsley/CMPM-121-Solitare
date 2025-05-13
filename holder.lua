@@ -29,8 +29,11 @@ function HolderClass:draw()
 end
 
 function HolderClass:update()
-  if self.cards[1] ~= nil and self.cards[1].position ~= self.position then
-    self.cards[1].position = self.position
+  if self.cards[#self.cards] ~= nil and (self.cards[#self.cards].cardBelowThis ~= nil and (self.cards[#self.cards].state ~= CARD_STATE.GRABBED)) then
+    table.remove(self.cards, #self.cards)
+    if #self.cards > 0 then
+      self.cards[#self.cards].faceUp = true
+    end
   end
 end
 
@@ -46,8 +49,11 @@ function HolderClass:checkForMouseOver(grabber)
       end
     end
     
-    if self.lastSeenCard.state == CARD_STATE.GRABBED then
-      table.remove(self.cards, #self.cards)
+    if grabber.heldObject == nil then
+      if self.lastSeenCard ~= nil and self.lastSeenCard.state == CARD_STATE.GRABBED then
+        self.lastSeenCard = nil
+        table.remove(self.cards, #self.cards)
+      end
     end
     
     if self.cards[1] ~= nil and self.cards[1].position ~= self.position then
@@ -70,4 +76,11 @@ function HolderClass:isMouseOver(grabber)
     mousePos.y < self.position.y + self.size.y
     
     return isMouseOver
+end
+
+function HolderClass:setCardPositions()
+  for index, card in ipairs(self.cards) do
+    card.position.x = self.position.x
+    card.position.y = self.position.y + (index - 1) * CARD_OVERLAP_OFFSET
+  end
 end
