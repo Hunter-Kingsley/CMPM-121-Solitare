@@ -15,6 +15,8 @@ function GrabberClass:new()
   
   -- NEW: we'll want to keep track of the object (ie. card) we're holding
   grabber.heldObject = nil
+  grabber.oldHeldAbove = nil
+  grabber.oldHeldBelow = nil
   
   grabber.isOverDeck = false
   grabber.deckRefrence = nil
@@ -43,11 +45,7 @@ function GrabberClass:grab()
   print("GRAB - " .. tostring(self.grabPos))
   
   if self.isOverDeck == true and self.heldObject == nil and #self.deckRefrence.cards > 0 then
-    print(#self.deckRefrence.cards)
-    self.deckRefrence.cards[#self.deckRefrence.cards].faceUp = true
-    self.deckRefrence.cards[#self.deckRefrence.cards].state = CARD_STATE.GRABBED
-    print("grabbed: " .. tostring(self.deckRefrence.cards[#self.deckRefrence.cards]))
-    self.heldObject = table.remove(self.deckRefrence.cards)
+    self.deckRefrence:getThreeCards()
   end
 end
 function GrabberClass:release()
@@ -60,7 +58,7 @@ function GrabberClass:release()
   
   -- TODO: eventually check if release position is invalid and if it is
   -- return the heldObject to the grabPosition
-  local isValidReleasePosition = true -- *insert actual check instead of "true"*
+  local isValidReleasePosition = self:checkValidReleasePosition() -- *insert actual check instead of "true"*
   if isValidReleasePosition then
     self.heldObject.position = self.currentMousePos - (self.heldObject.size / 2)
   else
@@ -71,4 +69,24 @@ function GrabberClass:release()
   
   self.heldObject = nil
   self.grabPos = nil
+end
+
+function GrabberClass:checkValidReleasePosition()
+  if self.heldObject == nil then
+    return false
+  end
+  
+  if self.heldObject.cardBelowThis == nil then
+    return false
+  end
+  
+  if debug then
+    --print("my value: " .. self.heldObject.value .. ", below value: " .. self.heldObject.cardBelowThis.value)
+    --print("my color: " .. self.heldObject.suit % 2 .. ", below color: " .. self.heldObject.cardBelowThis.suit % 2)
+  end
+  if self.heldObject.value == self.heldObject.cardBelowThis.value - 1 and (self.heldObject.suit % 2 ~= self.heldObject.cardBelowThis.suit % 2) then
+    return true
+  end
+  
+  return false
 end

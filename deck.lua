@@ -3,6 +3,8 @@ require "vector"
 require "holder"
 require "card"
 
+DRAW_PILE_OFFSET = 25
+
 DeckClass = HolderClass:new()
 
 function DeckClass:new(xPos, yPos)
@@ -11,6 +13,7 @@ function DeckClass:new(xPos, yPos)
   setmetatable(Deck, metatable)
   
   Deck.position = Vector(xPos, yPos)
+  Deck.drawPile = {}
   
   return Deck
 end
@@ -25,7 +28,6 @@ function DeckClass:draw()
 end
 
 function DeckClass:update()
-  return
 end
 
 function DeckClass:checkForMouseOver(grabber)
@@ -44,8 +46,8 @@ function DeckClass:setup()
   
   for suit = 0, 3, 1 do
     print(suit)
-    for _, value in ipairs(values) do
-      local newCard = CardClass:new(self.position.x, self.position.y, suit, value, false)
+    for index, value in ipairs(values) do
+      local newCard = CardClass:new(self.position.x, self.position.y, suit, index, value, false)
       table.insert(cardTable, newCard)
       table.insert(self.cards, newCard)
     end
@@ -66,4 +68,32 @@ function DeckClass:shuffle()
     end
     return deck
 
+end
+
+function DeckClass:getThreeCards()
+  while #self.drawPile > 0 do
+    local currentCard = table.remove(self.drawPile, #self.drawPile)
+    table.insert(self.cards, 1, currentCard)
+    currentCard.position = self.position
+    currentCard.faceUp = false
+    currentCard.state = CARD_STATE.IDLE
+  end
+  
+  for i = 1, 3, 1 do
+    if self.cards[#self.cards] then
+      local currentCard = table.remove(self.cards, #self.cards)
+      table.insert(self.drawPile, currentCard)
+      currentCard.z = i
+      if i ~= 3 or #self.cards < 1 then
+        currentCard.state = CARD_STATE.UNGRABABLE
+      end
+    end
+  end
+  
+  if #self.drawPile > 0 then
+    for index, card in ipairs(self.drawPile) do
+      card.position = Vector(deck.position.x + 100 + ((index - 1) * DRAW_PILE_OFFSET), deck.position.y) 
+      card.faceUp = true
+    end
+  end
 end

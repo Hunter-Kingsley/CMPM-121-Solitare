@@ -42,6 +42,8 @@ function love.update()
   for _, holder in ipairs(holderTable) do
     holder:update()
   end
+  
+  deck:update()
 end
 function love.draw()
   love.graphics.setColor(0, 0, 0, 1)
