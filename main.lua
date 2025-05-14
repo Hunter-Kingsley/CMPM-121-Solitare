@@ -9,6 +9,7 @@ require "card"
 require "grabber"
 require "deck"
 require "holder"
+require "resetButton"
 
 TABLEAU_START_X = 73
 TABLEAU_SPACING = 123
@@ -23,6 +24,7 @@ function love.load()
   
   grabber = GrabberClass:new()
   deck = DeckClass:new(50, 50)
+  resetButton = ResetButtonClass:new(50, 550)
   cardTable = {}
   holderTable = {}
   
@@ -58,6 +60,8 @@ function love.draw()
     card:draw() --card.draw(card)
   end
   
+  resetButton:draw()
+  
   love.graphics.setColor(1, 1, 1, 1)
   love.graphics.print("Mouse: " .. tostring(grabber.currentMousePos.x) .. ", " .. tostring(grabber.currentMousePos.y))
 end
@@ -79,19 +83,23 @@ function checkForMouseMoving()
 end
 
 function gameSetup()
-  table.insert(holderTable, HolderClass:new(TABLEAU_START_X, TABLEAU_Y))
-  table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING, TABLEAU_Y))
-  table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 2, TABLEAU_Y))
-  table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 3, TABLEAU_Y))
-  table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 4, TABLEAU_Y))
-  table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 5, TABLEAU_Y))
-  table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 6, TABLEAU_Y))
+  table.insert(holderTable, HolderClass:new(TABLEAU_START_X, TABLEAU_Y, false))
+  table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING, TABLEAU_Y, false))
+  table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 2, TABLEAU_Y, false))
+  table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 3, TABLEAU_Y, false))
+  table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 4, TABLEAU_Y, false))
+  table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 5, TABLEAU_Y, false))
+  table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 6, TABLEAU_Y, false))
   
-  table.insert(holderTable, HolderClass:new(600, 50))
-  table.insert(holderTable, HolderClass:new(670, 50))
-  table.insert(holderTable, HolderClass:new(740, 50))
-  table.insert(holderTable, HolderClass:new(810, 50))
+  table.insert(holderTable, HolderClass:new(600, 50, true))
+  table.insert(holderTable, HolderClass:new(670, 50, true))
+  table.insert(holderTable, HolderClass:new(740, 50, true))
+  table.insert(holderTable, HolderClass:new(810, 50, true))
   
+  cardPlacement()
+end
+
+function cardPlacement()
   deck:setup()
   
   for i = 1, 7, 1 do
@@ -99,13 +107,23 @@ function gameSetup()
       local currentCard = table.remove(deck.cards, #deck.cards)
       table.insert(holderTable[i].cards, currentCard)
       if j > 1 then
-        currentCard.cardBelowThis = holderTable[i].cards[#holderTable[i].cards]
         currentCard.cardBelowThis = nil
         currentCard.z = j
       end
     end
     holderTable[i]:setCardPositions()
     holderTable[i].cards[#holderTable[i].cards].faceUp = true
+  end
+end
+
+function love.mousereleased(mx, my, mButton)
+  if mButton == 1 and 
+    mx >= resetButton.position.x and mx < resetButton.position.x + resetButton.size.x and 
+    my >= resetButton.position.y and my < resetButton.position.y + resetButton.size.y then
+      
+    print("proc")
+    resetButton:resetGame()
+    cardPlacement()
   end
 end
 

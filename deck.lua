@@ -28,6 +28,12 @@ function DeckClass:draw()
 end
 
 function DeckClass:update()
+  if #self.drawPile > 0 then
+    if self.drawPile[#self.drawPile].state == CARD_STATE.UNGRABABLE or self.drawPile[#self.drawPile].state == CARD_STATE.IDLE_IN_STACK then
+      local currentCard = table.remove(self.drawPile, #self.drawPile)
+      self.drawPile[#self.drawPile].state = CARD_STATE.IDLE
+    end
+  end
 end
 
 function DeckClass:checkForMouseOver(grabber)

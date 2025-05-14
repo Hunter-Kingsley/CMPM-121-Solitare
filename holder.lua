@@ -5,7 +5,7 @@ require "vector"
 
 HolderClass = {}
 
-function HolderClass:new(xPos, yPos) 
+function HolderClass:new(xPos, yPos, t) 
   local Holder = {}
   local metadata = {__index = HolderClass}
   setmetatable(Holder, metadata)
@@ -14,6 +14,8 @@ function HolderClass:new(xPos, yPos)
   Holder.size = Vector(50, 70)
   Holder.cards = {}
   Holder.lastSeenCard = nil
+  
+  Holder.isTableau = t
   
   return Holder
 end
@@ -29,15 +31,40 @@ function HolderClass:draw()
 end
 
 function HolderClass:update()
-  if self.cards[#self.cards] ~= nil and (self.cards[#self.cards].cardBelowThis ~= nil and (self.cards[#self.cards].state ~= CARD_STATE.GRABBED)) then
-    table.remove(self.cards, #self.cards)
-    if #self.cards > 0 then
-      self.cards[#self.cards].faceUp = true
+  if self.isTableau then
+    for _, card in ipairs(self.cards) do
+      if card.state == CARD_STATE.IDLE then
+        card.state = CARD_STATE.UNGRABABLE
+      end
+    end
+  else
+    if self.cards[#self.cards] ~= nil then
+      if self.cards[#self.cards].cardBelowThis ~= nil and (self.cards[#self.cards].state ~= CARD_STATE.GRABBED) or (self.cards[#self.cards].state == CARD_STATE.UNGRABABLE) then
+        table.remove(self.cards, #self.cards)
+        if #self.cards > 0 then
+          self.cards[#self.cards].faceUp = true
+        end
+      end
     end
   end
+  
+  
 end
 
 function HolderClass:checkForMouseOver(grabber)
+  if self.isTableau == true then
+    if self:isMouseOver(grabber) then
+      grabber.tableauRefrence = self
+    if grabber.tableauRefrence == self then
+      if self:isMouseOver(grabber) then
+        grabber.isOverTableau = true
+      else
+        grabber.isOverTableau = false
+      end
+    end
+    end
+  end
+  
   if grabber.heldObject ~= nil and self:isMouseOver(grabber) then
     self.lastSeenCard = grabber.heldObject
   end
@@ -45,7 +72,9 @@ function HolderClass:checkForMouseOver(grabber)
   if self.lastSeenCard ~= nil then
     if self:isMouseOver(grabber) and self.lastSeenCard.state ~= CARD_STATE.GRABBED then
       if self.cards[#self.cards] ~= self.lastSeenCard then
-        table.insert(self.cards, self.lastSeenCard)        
+        table.insert(self.cards, self.lastSeenCard)
+        self.cards[#self.cards].state = CARD_STATE.UNGRABABLE
+        self.cards[#self.cards].z = #self.cards
       end
     end
     

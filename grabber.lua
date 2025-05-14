@@ -20,6 +20,8 @@ function GrabberClass:new()
   
   grabber.isOverDeck = false
   grabber.deckRefrence = nil
+  grabber.isOverTableau = false
+  grabber.tableauRefrence = nil
   
   return grabber
 end
@@ -46,6 +48,24 @@ function GrabberClass:grab()
   
   if self.isOverDeck == true and self.heldObject == nil and #self.deckRefrence.cards > 0 then
     self.deckRefrence:getThreeCards()
+  end
+  
+  if self.isOverTableau then
+    self.grabPos = self.tableauRefrence.position + (Vector(50, 70) / 2)
+  end
+  
+  print(self.isOverTableau == true)
+  print(self.heldObject == nil)
+  if self.isOverTableau then
+    print(#self.tableauRefrence.cards > 0)
+  end
+  if self.isOverTableau == true and self.heldObject == nil and #self.tableauRefrence.cards > 0 then
+    print(#self.tableauRefrence.cards)
+    self.tableauRefrence.cards[#self.tableauRefrence.cards].faceUp = true
+    self.tableauRefrence.cards[#self.tableauRefrence.cards].state = CARD_STATE.GRABBED
+    print("grabbed: " .. tostring(self.tableauRefrence.cards[#self.tableauRefrence.cards]))
+    --self.heldObject = table.remove(self.tableauRefrence.cards)
+    self.heldObject = self.tableauRefrence.cards[#self.tableauRefrence.cards]
   end
 end
 function GrabberClass:release()
@@ -84,7 +104,7 @@ function GrabberClass:checkValidReleasePosition()
     --print("my value: " .. self.heldObject.value .. ", below value: " .. self.heldObject.cardBelowThis.value)
     --print("my color: " .. self.heldObject.suit % 2 .. ", below color: " .. self.heldObject.cardBelowThis.suit % 2)
   end
-  if self.heldObject.value == self.heldObject.cardBelowThis.value - 1 and (self.heldObject.suit % 2 ~= self.heldObject.cardBelowThis.suit % 2) then
+  if self.heldObject.value == self.heldObject.cardBelowThis.value - 1 and (self.heldObject ~= self.heldObject.cardBelowThis) then
     return true
   end
   
