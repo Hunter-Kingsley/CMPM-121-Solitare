@@ -22,29 +22,16 @@ function HolderClass:new(xPos, yPos, t, suit)
 end
 
 function HolderClass:draw()
-  love.graphics.setColor(0, 0, 0, 1)
+  love.graphics.setColor(black)
   love.graphics.rectangle("line", self.position.x, self.position.y, self.size.x, self.size.y)
   
-  if self.suit == CARD_SUIT.SPADES then
-      love.graphics.setColor(1, 1, 1, 1)
-      love.graphics.draw(Sprites[CARD_SUIT.SPADES + 1], self.position.x + 30, self.position.y + 0, 0, 0.11, 0.11)
-      love.graphics.draw(Sprites[CARD_SUIT.SPADES + 1], self.position.x + 5, self.position.y + 50, 0, 0.11, 0.11)
-    end
-    if self.suit == CARD_SUIT.HEARTS then
-      love.graphics.setColor(1, 1, 1, 1)
-      love.graphics.draw(Sprites[CARD_SUIT.HEARTS + 1], self.position.x + 30, self.position.y + 0, 0, 0.11, 0.11)
-      love.graphics.draw(Sprites[CARD_SUIT.HEARTS + 1], self.position.x + 5, self.position.y + 50, 0, 0.11, 0.11)
-    end
-    if self.suit == CARD_SUIT.CLUBS then
-      love.graphics.setColor(1, 1, 1, 1)
-      love.graphics.draw(Sprites[CARD_SUIT.CLUBS + 1], self.position.x + 30, self.position.y + 0, 0, 0.11, 0.11)
-      love.graphics.draw(Sprites[CARD_SUIT.CLUBS + 1], self.position.x + 5, self.position.y + 50, 0, 0.11, 0.11)
-    end
-    if self.suit == CARD_SUIT.DIAMONDS then
-      love.graphics.setColor(1, 1, 1, 1)
-      love.graphics.draw(Sprites[CARD_SUIT.DIAMONDS + 1], self.position.x + 30, self.position.y + 0, 0, 0.11, 0.11)
-      love.graphics.draw(Sprites[CARD_SUIT.DIAMONDS + 1], self.position.x + 5, self.position.y + 50, 0, 0.11, 0.11)
-    end
+  -- Draw suit icons if the suit is set
+  if self.suit and Sprites[self.suit + 1] then
+    love.graphics.setColor(white)
+    local sprite = Sprites[self.suit + 1]
+    love.graphics.draw(sprite, self.position.x + 30, self.position.y + 2, 0, 0.11, 0.11)
+    love.graphics.draw(sprite, self.position.x + 5, self.position.y + 50, 0, 0.11, 0.11)
+  end
   
   if debug then
     love.graphics.setColor(0, 1, 0, 1)

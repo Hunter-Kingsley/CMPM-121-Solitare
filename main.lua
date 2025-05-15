@@ -3,7 +3,7 @@
 -- 4-21-25
 io.stdout:setvbuf("no")
 
-debug = false
+debug = true
 
 require "card"
 require "grabber"
@@ -48,8 +48,6 @@ function love.update()
   deck:update()
 end
 function love.draw()
-  love.graphics.setColor(0, 0, 0, 1)
-  
   deck:draw()
   
   for _, holder in ipairs(holderTable) do

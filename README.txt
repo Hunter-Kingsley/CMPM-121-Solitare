@@ -1,12 +1,17 @@
-Its Lazy Solitare! There is a draw pile you can pull from where all the cards start face down. Because I wasnt able to get the cards to snap to the relative position of the card holders yet, the game isnt immedalty set up for you, but the logic I would use is there (the same logic that lets me pull from the draw pile now is how the starting piles are gonna work). I could have just manually placed cards there with no underlying logic just for the sake of the rubric, but that felt kinda like cheating. You can also stack cards and split piles seamlessly!
+# It's Klondike Solitare!
 
-The first programming pattern I implemented was the subclass. I thought that because the deck pile and the card holders both shared the purpose of being able to hold cards and pick up cards from them, it would be usefull to implement the base class holder, then have the deck class inherit from it. This was nice because the holder class has couple functions and a parameter that deck needed and I was able to just use them without duplicating any code. I could also argue that I used a pseudo state machine for all of the cards. Having those states was super important for not only the picking-up and placing of cards, but also differentiating where and how a card was in a stack so I could cover all the edge cases and make the stacking and splitting as nice and easy as possible. Overall I'm proud of how the stacking turned out. It's intuitive, not buggy, and very similar to how it's implemented in official realeases of the game. The worst aspect of it I think is readability and polish. It works just fine, but I dont think the people in my section on monday are gonna have the slighest clue what going on. Taking a couple passes to put thoughtfull commenets around tricky logic and cleaning up small redundant code snippets could go a long way here.
+The first programming pattern I implemented was the subclass. I thought that because the deck pile and the card holders both shared the purpose of being able to hold cards and pick up cards from them, it would be usefull to implement the base class holder, then have the deck class inherit from it. This was nice because the holder class had some class variables and a function that I was able to inhert instead of duplicating the code. I also used the state pattern within each of the cards. Every card has a state that it can be in that describes what scenario that card is in. Some examples include a state for when the card is in the grabber and whether a card is idle with or without another card on top of itself. This allows the logic within the card and holders to take different paths and cover different edge cases depending on the exact state of the card. 
+
+Reviewers:
+- Jason Rangel-Martinez
+- Ronan Tsoi
+- Phineas Asmelash
+
+# Postmortem
+This project definetly became a pain towards the end, but I'm still proud of how it turned out because I was able to get all of the functionality in. My main struggle as I got farther and farther in was how the logic for card placement became spread out among multiple different files. A certain level of this is unavoidable though with the nature of Love2D not having built in collision detection. Drawing was also a major pain point. At first I had a lot of redundant code, but I was able to condense much of it down, seperate duplicate code into a function, and make it more readable by defining variables for colors. One thing that I think bogged me down and made me waste time was fixing immediate problems instead of getting all of the correct card placement logic in before handling the edge cases. This resulted in me spending a lot of time either reworking or completley deleting old checks because they only were applicable in a previous set of circumstances with different "rules" for what it allowed and restricted.
 
 Sprites:
 - Spades PNG: https://en.wikipedia.org/wiki/File:Card_spade.svg
 - Clubs PNG: https://en.wikipedia.org/wiki/File:Card_club.svg
 - Hearts PNG: https://en.wikipedia.org/wiki/File:Card_heart.svg
 - Diamonds PNG: https://en.wikipedia.org/wiki/File:Card_diamond.svg
-
-
-NOTE: This is not my final submission for Project 2, this week is very busy for me, so I will make sure to re-submit this before May 14 at 11:59 PM

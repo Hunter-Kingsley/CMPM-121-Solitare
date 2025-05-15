@@ -19,6 +19,11 @@ CARD_SUIT = {
   DIAMONDS = 3
 }
 
+red = {1, 0, 0, 1}
+black = {0, 0, 0, 1}
+white = {1, 1, 1, 1}
+blue = {0, 0, 1, 1}
+
 Sprites = {
     love.graphics.newImage("assets/spades.png"),
     love.graphics.newImage("assets/hearts.png"),
@@ -85,6 +90,7 @@ function CardClass:update()
 end
 
 function CardClass:draw()
+  
   if self.faceUp then
     -- NEW: drop shadow for non-idle cards
     if self.state ~= CARD_STATE.IDLE and self.state ~= CARD_STATE.IDLE_IN_STACK and self.state ~= CARD_STATE.UNGRABABLE then
@@ -94,85 +100,58 @@ function CardClass:draw()
     end
     
     -- fill white
-    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.setColor(white)
     love.graphics.rectangle("fill", self.position.x, self.position.y, self.size.x, self.size.y, 6, 6)
     -- black outline
-    love.graphics.setColor(0, 0, 0, 1)
+    love.graphics.setColor(black)
     love.graphics.rectangle("line", self.position.x, self.position.y, self.size.x, self.size.y, 6, 6)
     
     -- place card name and suit
-    if self.suit == CARD_SUIT.SPADES then
-      love.graphics.setColor(0, 0, 0, 1)
-      love.graphics.print(tostring(self.name), self.position.x + 5, self.position.y + 0, 0, 1.2, 1.2)
-      if self.value == 10 then
-        love.graphics.print(tostring(self.name), self.position.x + 28, self.position.y + 50, 0, 1.2, 1.2)
-      else
-        love.graphics.print(tostring(self.name), self.position.x + 37, self.position.y + 50, 0, 1.2, 1.2)
-      end
-      love.graphics.setColor(1, 1, 1, 1)
-      love.graphics.draw(Sprites[CARD_SUIT.SPADES + 1], self.position.x + 30, self.position.y + 0, 0, 0.11, 0.11)
-      love.graphics.draw(Sprites[CARD_SUIT.SPADES + 1], self.position.x + 5, self.position.y + 50, 0, 0.11, 0.11)
-    end
-    if self.suit == CARD_SUIT.HEARTS then
-      love.graphics.setColor(1, 0, 0, 1)
-      love.graphics.print(tostring(self.name), self.position.x + 5, self.position.y + 0, 0, 1.2, 1.2)
-      if self.value == 10 then
-        love.graphics.print(tostring(self.name), self.position.x + 28, self.position.y + 50, 0, 1.2, 1.2)
-      else
-        love.graphics.print(tostring(self.name), self.position.x + 37, self.position.y + 50, 0, 1.2, 1.2)
-      end
-      love.graphics.setColor(1, 1, 1, 1)
-      love.graphics.draw(Sprites[CARD_SUIT.HEARTS + 1], self.position.x + 30, self.position.y + 0, 0, 0.11, 0.11)
-      love.graphics.draw(Sprites[CARD_SUIT.HEARTS + 1], self.position.x + 5, self.position.y + 50, 0, 0.11, 0.11)
-    end
-    if self.suit == CARD_SUIT.CLUBS then
-      love.graphics.setColor(0, 0, 0, 1)
-      love.graphics.print(tostring(self.name), self.position.x + 5, self.position.y + 0, 0, 1.2, 1.2)
-      if self.value == 10 then
-        love.graphics.print(tostring(self.name), self.position.x + 28, self.position.y + 50, 0, 1.2, 1.2)
-      else
-        love.graphics.print(tostring(self.name), self.position.x + 37, self.position.y + 50, 0, 1.2, 1.2)
-      end
-      love.graphics.setColor(1, 1, 1, 1)
-      love.graphics.draw(Sprites[CARD_SUIT.CLUBS + 1], self.position.x + 30, self.position.y + 0, 0, 0.11, 0.11)
-      love.graphics.draw(Sprites[CARD_SUIT.CLUBS + 1], self.position.x + 5, self.position.y + 50, 0, 0.11, 0.11)
-    end
-    if self.suit == CARD_SUIT.DIAMONDS then
-      love.graphics.setColor(1, 0, 0, 1)
-      love.graphics.print(tostring(self.name), self.position.x + 5, self.position.y + 0, 0, 1.2, 1.2)
-      if self.value == 10 then
-        love.graphics.print(tostring(self.name), self.position.x + 28, self.position.y + 50, 0, 1.2, 1.2)
-      else
-        love.graphics.print(tostring(self.name), self.position.x + 37, self.position.y + 50, 0, 1.2, 1.2)
-      end
-      love.graphics.setColor(1, 1, 1, 1)
-      love.graphics.draw(Sprites[CARD_SUIT.DIAMONDS + 1], self.position.x + 30, self.position.y + 0, 0, 0.11, 0.11)
-      love.graphics.draw(Sprites[CARD_SUIT.DIAMONDS + 1], self.position.x + 5, self.position.y + 50, 0, 0.11, 0.11)
-    end
+    self:drawInfo()
+    
   else
     --fill blue
-    love.graphics.setColor(0, 0, 1, 1)
+    love.graphics.setColor(blue)
     love.graphics.rectangle("fill", self.position.x, self.position.y, self.size.x, self.size.y, 6, 6)
     -- black outline
-    love.graphics.setColor(0, 0, 0, 1)
+    love.graphics.setColor(black)
     love.graphics.rectangle("line", self.position.x, self.position.y, self.size.x, self.size.y, 6, 6)
   end
   
   
   if debug then -- print state, value of card under, value of card above, and z value
-    love.graphics.setColor(0, 0, 0, 1)
+    love.graphics.setColor(black)
     love.graphics.print(tostring(self.state), self.position.x + 20, self.position.y - 20)
     love.graphics.setColor(1, 1, 0, 1)
     love.graphics.print(tostring(self.z), self.position.x + 75, self.position.y)
     if self.cardBelowThis ~= nil then
-      love.graphics.setColor(1, 0, 0, 1)
+      love.graphics.setColor(red)
       love.graphics.print(tostring(self.cardBelowThis.value), self.position.x + 55, self.position.y - 20)
     end
     if self.cardAboveThis ~= nil then
-      love.graphics.setColor(0, 0, 1, 1)
+      love.graphics.setColor(blue)
       love.graphics.print(tostring(self.cardAboveThis.value), self.position.x + 65, self.position.y + 20)
     end
   end
+end
+
+function CardClass:drawInfo()
+  if self.suit == CARD_SUIT.SPADES or self.suit == CARD_SUIT.CLUBS then
+    love.graphics.setColor(black)
+  else
+    love.graphics.setColor(red)
+  end
+  
+  love.graphics.print(tostring(self.name), self.position.x + 5, self.position.y + 0, 0, 1.2, 1.2)
+  if self.value == 10 then
+    love.graphics.print(tostring(self.name), self.position.x + 28, self.position.y + 50, 0, 1.2, 1.2)
+  else
+    love.graphics.print(tostring(self.name), self.position.x + 37, self.position.y + 50, 0, 1.2, 1.2)
+  end
+  
+  love.graphics.setColor(white)
+  love.graphics.draw(Sprites[self.suit + 1], self.position.x + 30, self.position.y + 2, 0, 0.11, 0.11)
+  love.graphics.draw(Sprites[self.suit + 1], self.position.x + 5, self.position.y + 50, 0, 0.11, 0.11)
 end
 
 function CardClass:checkForMouseOver(grabber)
