@@ -5,7 +5,7 @@ require "vector"
 
 HolderClass = {}
 
-function HolderClass:new(xPos, yPos, t) 
+function HolderClass:new(xPos, yPos, t, suit) 
   local Holder = {}
   local metadata = {__index = HolderClass}
   setmetatable(Holder, metadata)
@@ -14,6 +14,7 @@ function HolderClass:new(xPos, yPos, t)
   Holder.size = Vector(50, 70)
   Holder.cards = {}
   Holder.lastSeenCard = nil
+  Holder.suit = suit
   
   Holder.isTableau = t
   
@@ -23,6 +24,27 @@ end
 function HolderClass:draw()
   love.graphics.setColor(0, 0, 0, 1)
   love.graphics.rectangle("line", self.position.x, self.position.y, self.size.x, self.size.y)
+  
+  if self.suit == CARD_SUIT.SPADES then
+      love.graphics.setColor(1, 1, 1, 1)
+      love.graphics.draw(Sprites[CARD_SUIT.SPADES + 1], self.position.x + 30, self.position.y + 0, 0, 0.11, 0.11)
+      love.graphics.draw(Sprites[CARD_SUIT.SPADES + 1], self.position.x + 5, self.position.y + 50, 0, 0.11, 0.11)
+    end
+    if self.suit == CARD_SUIT.HEARTS then
+      love.graphics.setColor(1, 1, 1, 1)
+      love.graphics.draw(Sprites[CARD_SUIT.HEARTS + 1], self.position.x + 30, self.position.y + 0, 0, 0.11, 0.11)
+      love.graphics.draw(Sprites[CARD_SUIT.HEARTS + 1], self.position.x + 5, self.position.y + 50, 0, 0.11, 0.11)
+    end
+    if self.suit == CARD_SUIT.CLUBS then
+      love.graphics.setColor(1, 1, 1, 1)
+      love.graphics.draw(Sprites[CARD_SUIT.CLUBS + 1], self.position.x + 30, self.position.y + 0, 0, 0.11, 0.11)
+      love.graphics.draw(Sprites[CARD_SUIT.CLUBS + 1], self.position.x + 5, self.position.y + 50, 0, 0.11, 0.11)
+    end
+    if self.suit == CARD_SUIT.DIAMONDS then
+      love.graphics.setColor(1, 1, 1, 1)
+      love.graphics.draw(Sprites[CARD_SUIT.DIAMONDS + 1], self.position.x + 30, self.position.y + 0, 0, 0.11, 0.11)
+      love.graphics.draw(Sprites[CARD_SUIT.DIAMONDS + 1], self.position.x + 5, self.position.y + 50, 0, 0.11, 0.11)
+    end
   
   if debug then
     love.graphics.setColor(0, 1, 0, 1)
@@ -37,24 +59,47 @@ function HolderClass:update()
         card.state = CARD_STATE.UNGRABABLE
       end
     end
+    
+--    if self.cards[#self.cards] ~= nil then
+--      if (self.cards[#self.cards].cardBelowThis ~= nil and (self.cards[#self.cards].state ~= CARD_STATE.GRABBED) or (self.cards[#self.cards].state == CARD_STATE.UNGRABABLE)) then
+--        table.remove(self.cards, #self.cards)
+--      end
+--    end
   else
     if self.cards[#self.cards] ~= nil then
-      if self.cards[#self.cards].cardBelowThis ~= nil and (self.cards[#self.cards].state ~= CARD_STATE.GRABBED) or (self.cards[#self.cards].state == CARD_STATE.UNGRABABLE) then
+      if (self.cards[#self.cards].cardBelowThis ~= nil and (self.cards[#self.cards].state ~= CARD_STATE.GRABBED) or (self.cards[#self.cards].state == CARD_STATE.UNGRABABLE)) then
         table.remove(self.cards, #self.cards)
         if #self.cards > 0 then
           self.cards[#self.cards].faceUp = true
         end
       end
     end
+    
+    if #self.cards == 1 and self.cards[#self.cards].value == 13 then
+      for _, holder in ipairs(holderTable) do
+        if holder.cards[#holder.cards] == self.cards[#self.cards] and #holder.cards > 1 then
+          table.remove(holder.cards, #holder.cards)
+          if #holder.cards > 0 then
+            holder.cards[#holder.cards].faceUp = true
+          end
+        end
+      end
+    end
   end
   
-  
+--  if #self.cards > 0 then
+--    if self.cards[#self.cards].state == CARD_STATE.UNGRABABLE or self.cards[#self.cards].state == CARD_STATE.IDLE_IN_STACK then
+--      local currentCard = table.remove(self.drawPile, #self.drawPile)
+--      self.drawPile[#self.drawPile].state = CARD_STATE.IDLE
+--    end
+--  end
 end
 
 function HolderClass:checkForMouseOver(grabber)
   if self.isTableau == true then
     if self:isMouseOver(grabber) then
       grabber.tableauRefrence = self
+    end
     if grabber.tableauRefrence == self then
       if self:isMouseOver(grabber) then
         grabber.isOverTableau = true
@@ -62,19 +107,30 @@ function HolderClass:checkForMouseOver(grabber)
         grabber.isOverTableau = false
       end
     end
-    end
   end
   
   if grabber.heldObject ~= nil and self:isMouseOver(grabber) then
-    self.lastSeenCard = grabber.heldObject
+    if self.isTableau then
+      if grabber.heldObject.value == #self.cards + 1 and grabber.heldObject.suit == self.suit and grabber.heldObject.cardAboveThis == nil then
+          self.lastSeenCard = grabber.heldObject
+      end
+      
+    else
+      if grabber.heldObject.value == 13 then
+        self.lastSeenCard = grabber.heldObject
+      end
+    end
   end
   
   if self.lastSeenCard ~= nil then
     if self:isMouseOver(grabber) and self.lastSeenCard.state ~= CARD_STATE.GRABBED then
       if self.cards[#self.cards] ~= self.lastSeenCard then
         table.insert(self.cards, self.lastSeenCard)
-        self.cards[#self.cards].state = CARD_STATE.UNGRABABLE
         self.cards[#self.cards].z = #self.cards
+        if self.isTableau then
+          self.cards[#self.cards].state = CARD_STATE.UNGRABABLE
+          self.cards[#self.cards].position = self.position
+        end
       end
     end
     

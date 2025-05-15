@@ -30,8 +30,19 @@ end
 function DeckClass:update()
   if #self.drawPile > 0 then
     if self.drawPile[#self.drawPile].state == CARD_STATE.UNGRABABLE or self.drawPile[#self.drawPile].state == CARD_STATE.IDLE_IN_STACK then
-      local currentCard = table.remove(self.drawPile, #self.drawPile)
-      self.drawPile[#self.drawPile].state = CARD_STATE.IDLE
+      table.remove(self.drawPile, #self.drawPile)
+      if #self.drawPile > 0 then
+        self.drawPile[#self.drawPile].state = CARD_STATE.IDLE
+      end
+    elseif self.drawPile[#self.drawPile].value == 13 then
+      for _, holder in ipairs(holderTable) do
+        if holder.cards[#holder.cards] == self.drawPile[#self.drawPile] then 
+          table.remove(self.drawPile, #self.drawPile)
+          if #self.drawPile > 0 then
+            self.drawPile[#self.drawPile].state = CARD_STATE.IDLE
+          end
+        end
+      end
     end
   end
 end
@@ -51,7 +62,6 @@ function DeckClass:setup()
   local values = {'A','2','3','4','5','6','7','8','9','10','J','Q','K'}
   
   for suit = 0, 3, 1 do
-    print(suit)
     for index, value in ipairs(values) do
       local newCard = CardClass:new(self.position.x, self.position.y, suit, index, value, false)
       table.insert(cardTable, newCard)

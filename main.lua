@@ -3,7 +3,7 @@
 -- 4-21-25
 io.stdout:setvbuf("no")
 
-debug = true
+debug = false
 
 require "card"
 require "grabber"
@@ -62,8 +62,17 @@ function love.draw()
   
   resetButton:draw()
   
-  love.graphics.setColor(1, 1, 1, 1)
-  love.graphics.print("Mouse: " .. tostring(grabber.currentMousePos.x) .. ", " .. tostring(grabber.currentMousePos.y))
+  if debug then
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.print("Mouse: " .. tostring(grabber.currentMousePos.x) .. ", " .. tostring(grabber.currentMousePos.y))
+  end
+  
+  -- Win Check
+  if #deck.cards == 0 and #deck.drawPile == 0 then
+      love.graphics.setColor(0, 0, 1, 1)
+    love.graphics.print("You Win!", 350, 60, 0, 1.5, 1.5)
+  end
+
 end
 
 function checkForMouseMoving()
@@ -91,10 +100,10 @@ function gameSetup()
   table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 5, TABLEAU_Y, false))
   table.insert(holderTable, HolderClass:new(TABLEAU_START_X + TABLEAU_SPACING * 6, TABLEAU_Y, false))
   
-  table.insert(holderTable, HolderClass:new(600, 50, true))
-  table.insert(holderTable, HolderClass:new(670, 50, true))
-  table.insert(holderTable, HolderClass:new(740, 50, true))
-  table.insert(holderTable, HolderClass:new(810, 50, true))
+  table.insert(holderTable, HolderClass:new(600, 50, true, CARD_SUIT.SPADES))
+  table.insert(holderTable, HolderClass:new(670, 50, true, CARD_SUIT.CLUBS))
+  table.insert(holderTable, HolderClass:new(740, 50, true, CARD_SUIT.HEARTS))
+  table.insert(holderTable, HolderClass:new(810, 50, true, CARD_SUIT.DIAMONDS))
   
   cardPlacement()
 end
@@ -120,8 +129,7 @@ function love.mousereleased(mx, my, mButton)
   if mButton == 1 and 
     mx >= resetButton.position.x and mx < resetButton.position.x + resetButton.size.x and 
     my >= resetButton.position.y and my < resetButton.position.y + resetButton.size.y then
-      
-    print("proc")
+
     resetButton:resetGame()
     cardPlacement()
   end

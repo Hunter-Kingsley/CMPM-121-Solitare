@@ -44,7 +44,6 @@ end
 
 function GrabberClass:grab()
   self.grabPos = self.currentMousePos
-  print("GRAB - " .. tostring(self.grabPos))
   
   if self.isOverDeck == true and self.heldObject == nil and #self.deckRefrence.cards > 0 then
     self.deckRefrence:getThreeCards()
@@ -54,23 +53,14 @@ function GrabberClass:grab()
     self.grabPos = self.tableauRefrence.position + (Vector(50, 70) / 2)
   end
   
-  print(self.isOverTableau == true)
-  print(self.heldObject == nil)
-  if self.isOverTableau then
-    print(#self.tableauRefrence.cards > 0)
-  end
   if self.isOverTableau == true and self.heldObject == nil and #self.tableauRefrence.cards > 0 then
-    print(#self.tableauRefrence.cards)
     self.tableauRefrence.cards[#self.tableauRefrence.cards].faceUp = true
     self.tableauRefrence.cards[#self.tableauRefrence.cards].state = CARD_STATE.GRABBED
-    print("grabbed: " .. tostring(self.tableauRefrence.cards[#self.tableauRefrence.cards]))
-    --self.heldObject = table.remove(self.tableauRefrence.cards)
+    --self.heldObject = table.remove(self.tableauRefrence.cards, #self.tableauRefrence.cards)
     self.heldObject = self.tableauRefrence.cards[#self.tableauRefrence.cards]
   end
 end
 function GrabberClass:release()
-  print("RELEASE - ") -- WATER BUCKET
-  -- NEW: some more logic stubs here
   if self.heldObject == nil then -- we have nothing to release
     self.grabPos = nil
     return
@@ -78,9 +68,14 @@ function GrabberClass:release()
   
   -- TODO: eventually check if release position is invalid and if it is
   -- return the heldObject to the grabPosition
-  local isValidReleasePosition = self:checkValidReleasePosition() -- *insert actual check instead of "true"*
+  local isValidReleasePosition = self:checkValidReleasePosition()
   if isValidReleasePosition then
     self.heldObject.position = self.currentMousePos - (self.heldObject.size / 2)
+    if self.tableauRefrence ~= nil then
+      if self.tableauRefrence.cards[#self.tableauRefrence.cards] == self.heldObject then
+        table.remove(self.tableauRefrence.cards, #self.tableauRefrence.cards)
+      end
+    end
   else
     self.heldObject.position = self.grabPos - (self.heldObject.size / 2)
   end
